@@ -29,23 +29,38 @@ def load_txt(file): # transform a sudoku into cnf
     return cnf
 
 
-# sudoku = load_txt('sat_tests/sudoku_txt/sudoku1.txt')
-sudoku = load_dimacs('sat_tests/sudoku_dimacs/sudoku1')
+sudoku = load_txt('sat_tests/sudoku_txt/sudoku1.txt')
+# sudoku = load_dimacs('sat_tests/sudoku_dimacs/sudoku2')
 rules = load_dimacs('sudoku-rules.txt')
 cnf = sudoku + rules
 
 
 start = time.time()
-print(sat_solver.dpll(cnf))
-sat_solver.solution.sort()
-print('Sudoku solution: ', sat_solver.solution)
-print('Solution length: ', len(sat_solver.solution)) # length > 81 means there are multiple solutions
+sol = []
+print(sat_solver.dpll(cnf, sol))
+sol.sort()
+print('Sudoku solution: ', sol)
+print('Solution length: ', len(sol)) # length > 81 means there are multiple solutions
 end = time.time()
 print('Time: ', end - start)
 
 
+lag = 0
+for i in range(0, len(sol)):
+    cell = i + 11 + (i // 9)
+    if sol[i - lag] // 10 != cell:
+        print('Missing: ', end='')
+        print(cell)
+        lag = lag + 1
+
+
+for i in range(0, 81):
+    print(sol[i]%10, end=' ')
+    if (i+1) % 9 == 0:
+        print('\n', end='')
+
+
 output = open('file.out', 'w')
-if sat_solver.dpll(cnf):
-    for element in sat_solver.solution:
-        output.write(str(element) + ' 0 \n')
+for element in sol:
+    output.write(str(element) + ' 0 \n')
 output.close()
