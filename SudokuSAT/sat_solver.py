@@ -1,28 +1,43 @@
 import random
 from statistics import mode
 
-solution = []
 
-
-def dpll(cnf):
+def dpll(cnf, solution):
     if not cnf:
         return True
     if [] in cnf:
         return False
-    cnf_copy = [x for x in cnf]  # deep copy
-    for clause in cnf_copy:
+    for clause in cnf:
         if len(clause) == 1:  # unit propagation
             if clause[0] > 0 and clause[0] not in solution:
                 solution.append(clause[0])
-            return dpll(reduced(cnf, clause[0]))
+            return dpll(reduced(cnf, clause[0]), solution)
     # literals = literals_list(cnf)  it is slower with this
     # for literal in literals:
     #     if is_pure(literals, literal):
     #         return dpll(reduced(cnf, literal))
 
-    # chosen = random(cnf) # no heuristic
+    # chosen = random_select(cnf)
     chosen = most_common(cnf) # first heuristic
-    return dpll(reduced(cnf, chosen)) or dpll(reduced(cnf, -chosen))
+
+    sol_copy = [x for x in solution]
+    a = dpll(reduced(cnf, chosen), sol_copy)
+    if a:
+        for x in sol_copy:
+            if x not in solution:
+                solution.append(x)
+        if chosen > 0:
+            solution.append(chosen)
+        return a
+    sol_copy2 = [x for x in solution]
+    b = dpll(reduced(cnf, -chosen), sol_copy2)
+    if b:
+        for x in sol_copy2:
+            if x not in solution:
+                solution.append(x)
+        if -chosen > 0:
+            solution.append(-chosen)
+    return b
 
 
 def reduced(cnf, var): # returns a new cnf without clauses that include var and without -var
@@ -41,7 +56,7 @@ def cnf_to_flat_list(cnf):
     return cnf_flat_list
 
 
-def random(cnf):
+def random_select(cnf):
     if not cnf:
         return 0
     cnf_flat_list = cnf_to_flat_list(cnf)
