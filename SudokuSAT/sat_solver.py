@@ -18,13 +18,14 @@ def dp(cnf, solution):
     #     if is_pure(literals, literal):
     #         return dpll(reduced(cnf, literal))
 
-    # chosen = cnf_to_flat_list(cnf)[0]
+    # chosen = cnf[0][0]
     # chosen = random_select(cnf) # first heuristic
     chosen = most_common(cnf) # second heuristic -> DLIS
 
     sol_copy = [x for x in solution]
     a = dp(reduced(cnf, chosen), sol_copy)
     if a:
+        # print('a ', chosen)
         for x in sol_copy:
             if x not in solution:
                 solution.append(x)
@@ -34,6 +35,7 @@ def dp(cnf, solution):
     sol_copy2 = [x for x in solution]
     b = dp(reduced(cnf, -chosen), sol_copy2)
     if b:
+        # print('b ', -chosen)
         for x in sol_copy2:
             if x not in solution:
                 solution.append(x)
