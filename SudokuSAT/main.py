@@ -16,23 +16,33 @@ def load_dimacs(file):
     return cnf
 
 
-def load_txt(file): # transform a sudoku into cnf
-    f = open(file, 'r')
-    data = f.read()
-    f.close()
-    cnf = []
-    for i in range(1, 10):
-        for j in range(1, 10):
-            if data[0] != '.':
-                cnf.append([i*100 + j*10 + int(data[0])])
-            data = data[1:]
-    return cnf
+# def load_txt(file): # transform a sudoku into cnf
+#     f = open(file, 'r')
+#     data = f.read()
+#     f.close()
+#     cnf = []
+#     for i in range(1, 10):
+#         for j in range(1, 10):
+#             if data[0] != '.':
+#                 cnf.append([i*100 + j*10 + int(data[0])])
+#             data = data[1:]
+#     return cnf
 
 
-def print_sudoku_grid(sol):
-    for i in range(0, 81):
+def load_rules(rulesNr):
+    if rulesNr == 1:
+        rules = load_dimacs('sat_tests/sudoku_rules/sudoku-rules-4x4.txt')
+    elif rulesNr == 2:
+        rules = load_dimacs('sat_tests/sudoku_rules/sudoku-rules-9x9.txt')
+    else:
+        rules = load_dimacs('sat_tests/sudoku_rules/sudoku-rules-16x16.txt')
+    return rules
+
+
+def print_sudoku_grid(sol, x):
+    for i in range(0, x*x):
         print(sol[i] % 10, end=' ')
-        if (i + 1) % 9 == 0:
+        if (i + 1) % x == 0:
             print('\n', end='')
 
 
@@ -53,16 +63,16 @@ def check_if_missing(sol):
             lag = lag + 1
 
 
-def load_many_sudokus(file, rules):
+def load_many_sudokus(file, rules, x):
     f = open(file, 'r')
     data = f.read()
     f.close()
     lines = data.split("\n")
     for line in lines:
         cnf = []
-        for i in range(1, 10):
-            for j in range(1, 10):
-                if line[0] != '.':
+        for i in range(1, x+1):
+            for j in range(1, x+1):
+                if len(line) != 0 and line[0] != '.':
                     cnf.append([i * 100 + j * 10 + int(line[0])])
                 line = line[1:]
         cnf += rules
@@ -74,16 +84,22 @@ def load_many_sudokus(file, rules):
         print('Solution length: ', len(sol))
         end = time.time()
         print('Time: ', end - start)
-        print_sudoku_grid(sol)
+        print_sudoku_grid(sol, x)
 
 
-rules = load_dimacs('sudoku-rules.txt')
-load_many_sudokus('sat_tests/sudoku_txt/1000 sudokus.txt', rules)
+x = input('Choose sudoku dimension (4 or 9): ')
+x = int(x)
+if x == 4:
+    rules = load_rules(1)
+    load_many_sudokus('sat_tests/sudoku_txt/4x4.txt', rules, x)
+elif x == 9:
+    rules = load_rules(2)
+    load_many_sudokus('sat_tests/sudoku_txt/1000 sudokus.txt', rules, x)
 
 
 # sudoku = load_txt('sat_tests/sudoku_txt/sudoku5.txt')
 # # sudoku = load_dimacs('sat_tests/sudoku_dimacs/sudoku2')
-# rules = load_dimacs('sudoku-rules.txt')
+# rules = load_dimacs('sudoku-rules-9x9.txt')
 # cnf = sudoku + rules
 
 
