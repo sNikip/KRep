@@ -5,6 +5,7 @@ import numpy as np
 
 nrofSplits = 0
 nrofBacktracks = 0
+heur = ''
 
 def dp(cnf, solution):
     global nrofSplits
@@ -37,7 +38,7 @@ def dp(cnf, solution):
 
     # chosen = cnf[0][0]
     # chosen = random_select(cnf) # first heuristic
-    chosen = dlis(cnf) # second heuristic -> DLIS
+    chosen = most_common(cnf) # second heuristic -> DLIS
     nrofSplits += 1
     countA= 0
     countB= 0
@@ -85,6 +86,8 @@ def random_select(cnf):
     if not cnf:
         return 0
     cnf_flat_list = cnf_to_flat_list(cnf)
+    global heur
+    heur = 'Random'
     return random.choice(cnf_flat_list)
 
 
@@ -92,12 +95,16 @@ def most_common(cnf): # first heuristics: maximum individual sum
     if not cnf:
         return 0
     cnf_flat_list = cnf_to_flat_list(cnf)
+    global heur
+    heur = 'DLIS'
     return mode(cnf_flat_list)
 
-def dlis(cnf):
+def min_heur(cnf):
     if not cnf:
         return 0
     cnf_flat_list = cnf_to_flat_list(cnf)
+    global heur
+    heur = 'Min Heur'
     return min(cnf_flat_list)
 
 def pdlis(cnf):

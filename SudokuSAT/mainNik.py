@@ -1,5 +1,5 @@
-from sat_solverNik import *
-import sat_solverNik
+from sat_solver import *
+import sat_solver
 import time
 import pandas as pd
 import numpy as np
@@ -93,7 +93,7 @@ def load_many_sudokus(file, rules, x, sudokuAmount):
             Total_time = end - start
             print('Time: ', Total_time)
             print_sudoku_grid(sol, x)
-            dataset = dataset.append({'ID': counter, 'Heuristic': 'DLIS', 'Time': Total_time, 'Nr of Splits': sat_solver.nrofSplits_tosave, 'Nr of Backtracks': sat_solver.nrofBacktracks_tosave, 'Amout of Putnam Calls': sat_solver.putnamCalls}, ignore_index=True)
+            dataset = dataset.append({'ID': counter, 'Heuristic': sat_solver.heur, 'Time': Total_time, 'Nr of Splits': sat_solver.nrofSplits_tosave, 'Nr of Backtracks': sat_solver.nrofBacktracks_tosave, 'Amout of Putnam Calls': sat_solver.putnamCalls}, ignore_index=True)
             counter +=1
     print(dataset)
     filename = f'sat_solver_DLIS.xls'
@@ -108,7 +108,7 @@ if x == 4:
     load_many_sudokus('sat_tests/sudoku_txt/4x4.txt', rules, x, 5)
 elif x == 9:
     rules = load_rules(2)
-    load_many_sudokus('sat_tests/sudoku_txt/1000 sudokus.txt', rules, x, 10)
+    load_many_sudokus('sat_tests/sudoku_txt/1000 sudokus.txt', rules, x, 2)
 elif x == 16:
     rules = load_rules(3)
     load_many_sudokus('sat_tests/sudoku_txt/16x16.txt', rules, x, 5)
