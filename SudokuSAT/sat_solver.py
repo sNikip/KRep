@@ -19,8 +19,8 @@ def dp(cnf, solution):
     #         return dpll(reduced(cnf, literal))
 
     # chosen = cnf[0][0]
-    # chosen = random_select(cnf) # first heuristic
-    chosen = most_common(cnf) # second heuristic -> DLIS
+    chosen = random_select(cnf) # first heuristic
+    #chosen = most_common(cnf) # second heuristic -> DLIS
 
     sol_copy = [x for x in solution]
     a = dp(reduced(cnf, chosen), sol_copy)
