@@ -37,6 +37,8 @@ def dp(cnf, solution, h):
         chosen = dlcs(cnf)
     elif h == 4:
         chosen = min_heur(cnf)
+    elif h == 5:
+        chosen = jw(cnf)
 
     nrofSplits += 1
 
