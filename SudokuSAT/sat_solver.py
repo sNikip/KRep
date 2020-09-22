@@ -121,3 +121,17 @@ def min_heur(cnf):
     heur = 'Min Heur'
     return min(cnf_flat_list)
 
+def jw(cnf):
+    scores = get_jw_scores(cnf)
+    return max(scores, key=scores.get)
+
+def get_jw_scores(cnf, w=2):
+    scores = {}
+    for clause in cnf:
+        for lit in clause:
+            if lit in scores:
+                scores[lit] += w ** -len(clause)
+            else:
+                scores[lit] = w ** -len(clause)
+    return scores
+
