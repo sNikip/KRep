@@ -65,6 +65,7 @@ def load_many_sudokus(file, rules, x, sudokuAmount):
     lines = data.split("\n")
     counter = 1
     dataset = pd.DataFrame(columns=['ID', 'Heuristic', 'Time', 'Nr of Splits','Nr of Backtracks'])
+    datasetavg = pd.DataFrame(columns=['Average time', 'Average nr of splits', 'Average nr of backtracks'])
     for line in lines:
         if (counter < sudokuAmount +1):
             cnf = []
@@ -91,14 +92,14 @@ def load_many_sudokus(file, rules, x, sudokuAmount):
             average_nr_of_backtracks += sat_solver.nrofBacktracks_tosave
 
     print(dataset)
-    filename = f'sat_solver_DLIS.xls'
+    filename = f'sat_solver_{h}.xls'
     dataset.to_excel(filename, index = False)
-    print('Average time: ', average_time/sudokuAmount)
-    print("Average nr of splits: ", average_nr_of_splits/sudokuAmount)
-    print('Average nr of backtracks: ', average_nr_of_backtracks/sudokuAmount)
-
-
-
+    #print('Average time: ', average_time/sudokuAmount)
+    #print("Average nr of splits: ", average_nr_of_splits/sudokuAmount)
+    #print('Average nr of backtracks: ', average_nr_of_backtracks/sudokuAmount)
+    datasetavg = dataset.append({'Average time': average_time/sudokuAmount, 'Average nr of splits': average_nr_of_splits/sudokuAmount, 'Average nr of backtracks':average_nr_of_backtracks/sudokuAmount}, ignore_index=True)
+    #print(datasetavg)
+    datasetavg.to_excel(filename, index = False)
 
 x = input('Choose sudoku dimension (4 or 9): ')
 x = int(x)

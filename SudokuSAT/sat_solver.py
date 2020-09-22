@@ -121,11 +121,3 @@ def min_heur(cnf):
     heur = 'Min Heur'
     return min(cnf_flat_list)
 
-def pdlis(cnf):
-    if not cnf:
-        return 0
-    cnf_flat_list = cnf_to_flat_list(cnf)
-    values = [cnf_flat_list[key] for key in cnf_flat_list.keys()]
-    prob = [(value / sum(values)) for value in values]
-
-    return np.random.choice(cnf_flat_list, size = 1, p=prob)[0]
