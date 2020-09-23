@@ -1,5 +1,7 @@
+from sat_solver import *
 import sat_solver
 import time
+import pandas as pd
 
 
 def load_dimacs(file):
@@ -14,19 +16,6 @@ def load_dimacs(file):
         clause = [int(x) for x in line.split()[:-1]] # transform the string clause format into a int one, remove the last 0;
         cnf.append(clause) # add the clause to the list
     return cnf
-
-
-# def load_txt(file): # transform a sudoku into cnf
-#     f = open(file, 'r')
-#     data = f.read()
-#     f.close()
-#     cnf = []
-#     for i in range(1, 10):
-#         for j in range(1, 10):
-#             if data[0] != '.':
-#                 cnf.append([i*100 + j*10 + int(data[0])])
-#             data = data[1:]
-#     return cnf
 
 
 def load_rules(rulesNr):
@@ -63,57 +52,63 @@ def check_if_missing(sol):
             lag = lag + 1
 
 
-def load_many_sudokus(file, rules, x):
+
+def load_many_sudokus(file, rules, x, sudokuAmount):
+    average_time = 0
+    average_nr_of_splits = 0
+    average_nr_of_backtracks = 0
+    h = input('Choose heuristic (0 - none, 1 - random, 2 - DLIS, 3 - DLCS or 4 - min heur): ')
+    h = int(h)
     f = open(file, 'r')
     data = f.read()
     f.close()
     lines = data.split("\n")
+    counter = 1
+    dataset = pd.DataFrame(columns=['ID', 'Heuristic', 'Time', 'Nr of Splits','Nr of Backtracks'])
+    datasetavg = pd.DataFrame(columns=['Average time', 'Average nr of splits', 'Average nr of backtracks'])
     for line in lines:
-        cnf = []
-        for i in range(1, x+1):
-            for j in range(1, x+1):
-                if len(line) != 0 and line[0] != '.':
-                    cnf.append([i * 100 + j * 10 + int(line[0])])
-                line = line[1:]
-        cnf += rules
-        start = time.time()
-        sol = []
-        print(sat_solver.dp(cnf, sol))
-        sol.sort()
-        print('Sudoku solution: ', sol)
-        print('Solution length: ', len(sol))
-        end = time.time()
-        print('Time: ', end - start)
-        print_sudoku_grid(sol, x)
+        if (counter < sudokuAmount +1):
+            cnf = []
+            for i in range(1, x+1):
+                for j in range(1, x+1):
+                    if len(line) != 0 and line[0] != '.':
+                        cnf.append([i * 100 + j * 10 + int(line[0])])
+                    line = line[1:]
+            cnf += rules
+            start = time.time()
+            sol = []
+            print(sat_solver.dp(cnf, sol, h))
+            sol.sort()
+            print('Sudoku solution: ', sol)
+            print('Solution length: ', len(sol))
+            end = time.time()
+            Total_time = end - start
+            average_time += Total_time
+            print('Time: ', Total_time)
+            print_sudoku_grid(sol, x)
+            dataset = dataset.append({'ID': counter, 'Heuristic': sat_solver.heur, 'Time': Total_time, 'Nr of Splits': sat_solver.nrofSplits_tosave, 'Nr of Backtracks': sat_solver.nrofBacktracks_tosave}, ignore_index=True)
+            counter +=1
+            average_nr_of_splits += sat_solver.nrofSplits_tosave
+            average_nr_of_backtracks += sat_solver.nrofBacktracks_tosave
 
+    print(dataset)
+    filename = f'sat_solver_{h}.xls'
+    dataset.to_excel(filename, index = False)
+    #print('Average time: ', average_time/sudokuAmount)
+    #print("Average nr of splits: ", average_nr_of_splits/sudokuAmount)
+    #print('Average nr of backtracks: ', average_nr_of_backtracks/sudokuAmount)
+    datasetavg = dataset.append({'Average time': average_time/sudokuAmount, 'Average nr of splits': average_nr_of_splits/sudokuAmount, 'Average nr of backtracks':average_nr_of_backtracks/sudokuAmount}, ignore_index=True)
+    #print(datasetavg)
+    datasetavg.to_excel(filename, index = False)
 
 x = input('Choose sudoku dimension (4 or 9): ')
 x = int(x)
 if x == 4:
     rules = load_rules(1)
-    load_many_sudokus('sat_tests/sudoku_txt/4x4.txt', rules, x)
+    load_many_sudokus('sat_tests/sudoku_txt/4x4.txt', rules, x, 50)
 elif x == 9:
     rules = load_rules(2)
-    load_many_sudokus('sat_tests/sudoku_txt/1000 sudokus.txt', rules, x)
-
-
-# sudoku = load_txt('sat_tests/sudoku_txt/sudoku5.txt')
-# # sudoku = load_dimacs('sat_tests/sudoku_dimacs/sudoku2')
-# rules = load_dimacs('sudoku-rules-9x9.txt')
-# cnf = sudoku + rules
-
-
-# start = time.time()
-# sol = []
-# print(sat_solver.dp(cnf, sol))
-# sol.sort()
-# print('Sudoku solution: ', sol)
-# print('Solution length: ', len(sol)) # length > 81 means there are multiple solutions
-# end = time.time()
-# print('Time: ', end - start)
-#
-#
-# check_if_missing(sol)
-#
-# print_sudoku_grid(sol)
-# write_output(sol)
+    load_many_sudokus('sat_tests/sudoku_txt/damnhard.sdk.txt', rules, x, 5)
+elif x == 16:
+    rules = load_rules(3)
+    load_many_sudokus('sat_tests/sudoku_txt/16x16.txt', rules, x, 5)
