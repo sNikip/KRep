@@ -24,7 +24,7 @@ def check_sudoku(file, sudoku_amount, version):
 
     print('Total amount of givens in text file :', number_of_givens)
     print('Average of givens per Sudoku :', average_given)
-    print('Percentage of givens: ', percentage_given)
+    print('Average percentage of givens: ', percentage_given)
 
 
 pick_sudoku = input("Choose the sudoku version you want to analyze (4 or 9): ")
