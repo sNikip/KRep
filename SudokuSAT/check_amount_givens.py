@@ -4,14 +4,14 @@ def determine_sudoku_file(version):
         sudoku_amount = len(open('sat_tests/sudoku_txt/4x4.txt').readlines())
         return check_sudoku(file, sudoku_amount, version)
     elif version == 9:
-        file = open("sat_tests/sudoku_txt/1000 sudokus.txt", "r") #open file in read mode
-        sudoku_amount = len(open('sat_tests/sudoku_txt/1000 sudokus.txt').readlines())
+        file = open("sat_tests/sudoku_txt/1000 sudokus hard.txt", "r") #open file in read mode
+        sudoku_amount = len(open('sat_tests/sudoku_txt/1000 sudokus hard.txt').readlines())
         return check_sudoku(file, sudoku_amount, version)
 
 
 def check_sudoku(file, sudoku_amount, version):
     print('Amount of sudokus in this file :', sudoku_amount)
-    linebreak_amount = sudoku_amount - 1
+    linebreak_amount = sudoku_amount
 
     #read the content of file and replace the dots with nothing
     data = file.read().replace(".","")
