@@ -1,7 +1,7 @@
 import random
 
 # with is like your try .. finally block in this case
-with open("sat_tests/sudoku_txt/4x4.txt", 'r') as file:
+with open("sat_tests/sudoku_txt/1000 sudokus.txt", 'r') as file:
     # read a list of lines into data
     data = file.readlines()
 
@@ -12,14 +12,15 @@ with open("sat_tests/sudoku_txt/4x4.txt", 'r') as file:
 #with open('stats.txt', 'w') as file:
 #    file.writelines( data )
 
-f = open("sat_tests/sudoku_txt/4x4hard.txt", "a")
+f = open("sat_tests/sudoku_txt/1000 sudokus hard.txt", "a")
 
-for line in range(len(data)):
+
+for line in range(50):
     numbers = sum(c.isdigit() for c in data[line])
     lijst = list(data[line].strip())
     #print(numbers)
     #print(''.join(lijst))
-    while numbers > 3:
+    while numbers > 17:
         #print(lijst)
         indices = []
         for i in range(len(lijst)):
@@ -31,7 +32,7 @@ for line in range(len(data)):
         indices.remove(rand_int)
         numbers += -1
         #print(numbers)
-    if numbers == 3:
+    if numbers == 17:
         new_lijst = ''.join(lijst)
         print(new_lijst, file=f)
 
